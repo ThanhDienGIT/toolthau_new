@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "axios": "^0.27.2",
+    "colors": "^1.4.0",
+    "date-fns": "^2.29.3",
+    "dotenv": "^16.0.2",
+    "mssql": "^9.0.1",
+    "node-schedule": "^2.1.0",
+    "telegraf": "^4.9.2",
+    "selenium-webdriver": "^4.15.0"
+  },
+  "devDependencies": {
+      "nodemon": "^2.0.15"
+  },
+  "scripts": {
+      "start": "nodemon index.js"
+  }
+}
