@@ -19,6 +19,8 @@ SCHEDULES.forEach((SCHEDULE) => {
   scheduleJob(SCHEDULE, () => runScheduleNew(bot));
 });
 
+runScheduleNew(bot)
+
 console.clear();
 console.log("launch bot");
 bot.launch();
