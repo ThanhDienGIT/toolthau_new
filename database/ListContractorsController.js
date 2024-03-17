@@ -52,16 +52,15 @@ module.exports = {
           }
      },
 
-     updateStatusPackage: async (magoithau, trangthaigoithau) => {
+     updateStatusPackage: async (magoithau) => {
           try {
                let pool = await mssql.connect(config);
                let sql = "UPDATE BangDuLieuThauGlobal SET isGet = 1 WHERE magoithau = @magoithau;"
                let result = await pool
                     .request()
                     .input("magoithau", magoithau)
-                    .input("trangthaigoithau", trangthaigoithau)
                     .query(sql);
-               return `Cập nhật thành công gói thầu ${magoithau} với trạng trạng thái gói thầu là ${trangthaigoithau}`;
+               return `Cập nhật thành công gói thầu ${magoithau}`;
           } catch (err) {
                console.log(colors.red(err));
           }
