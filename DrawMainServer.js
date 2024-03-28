@@ -1,12 +1,12 @@
 const { Builder, By, until } = require("selenium-webdriver");
-const { checkListPackage, insertListPackage, updateStatusAndisGetPackage, updateStatusPackage, getAllDataListPackage } = require("./database/ListContractorsController")
+const { checkListPackage, insertListPackage, updateStatusAndisGetPackage, updateStatusPackage, getAllDataListPackageServer2 } = require("./database/ListContractorsController")
 const { checkDetailInfomationPackage, insertDetailInfomationPackage, getInfomationInfoPackage, updateDetailInfomationPackage, insertContractorsRelatedToTheBiddingPackage } = require("./database/DetailContractorsController")
 
 
 const DrawGoiThau = async () => {
      let driver = await new Builder().forBrowser("chrome").build();
      try {
-          const arrThau = await getAllDataListPackage()
+          const arrThau = await getAllDataListPackageServer2()
           const arrRun = await arrThau.filter(x => x.isGet === 0);
           await driver.get("https://muasamcong.mpi.gov.vn/");
           await driver.manage().window().maximize();
@@ -40,7 +40,6 @@ const DrawGoiThau = async () => {
                     // Lấy thông tin gói thầu thông báo mời thầu
                     const arrInfomation = []
                     const arrInfomation2 = []
-                    await new Promise(resolve => setTimeout(resolve, 2000));
                     var infomationPackage = await driver.wait(until.elementsLocated(By.className('d-flex flex-row align-items-start infomation__content')), 100000)
                     for (let item of infomationPackage) {
                          arrInfomation.push(await item.getText())
@@ -150,13 +149,13 @@ const DrawGoiThau = async () => {
                     var conhatrungthau = false
                     if (typeResultButton.length > 0) {
                          for (let itemLuaChonThau of typeResultButton) {
-                              if (await itemLuaChonThau.getText() === 'Kết quả lựa chọn nhà thầu') {
+                              if(await itemLuaChonThau.getText() === 'Kết quả lựa chọn nhà thầu'){
                                    const a = await itemLuaChonThau.findElement(By.css('a'))
-                                   await a.click();
-                                   conhatrungthau = true
+                                        await a.click();
+                                        conhatrungthau = true
+                                   }
                               }
                          }
-                    }
                     await new Promise(resolve => setTimeout(resolve, 3000));
                     let infomationPackage2 = await driver.wait(until.elementsLocated(By.className('d-flex flex-row align-items-start infomation__content')), 100000)
                     for (let item2 of infomationPackage2) {
@@ -444,7 +443,6 @@ const DrawGoiThau = async () => {
           }
      } catch (err) {
           console.log("lỗi")
-          await DrawGoiThau()
           console.log(err)
      } finally {
           await driver.quit()

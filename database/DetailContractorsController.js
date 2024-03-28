@@ -105,7 +105,7 @@ module.exports = {
                     "GIAGOITHAU_KETQUAMOITHAU = @GIAGOITHAU_KETQUAMOITHAU, " +
                     "COQUANPHEDUYET_KETQUAMOITHAU = @COQUANPHEDUYET_KETQUAMOITHAU, " +
                     "KETQUADAUTHAU = @KETQUADAUTHAU, " +
-                    "TRANGTHAIGOITHAU = @TRANGTHAIGOITHAU, " +
+                    "TRANGTHAIGOITHAU = @TRANGTHAIGOITHAU " +
                     " WHERE MATBMT = @MATBMT";
                let result = await pool
                     .request()
@@ -118,7 +118,7 @@ module.exports = {
                     .input('TRANGTHAIGOITHAU', TRANGTHAIGOITHAU)
                     .input('MATBMT', MATBMT)
                     .query(sql);
-               return result;
+               return result.rowsAffected.length;
           } catch (err) {
                console.log(colors.red(err));
           }
@@ -143,5 +143,20 @@ module.exports = {
                console.log(colors.red(err));
           }
      },
+
+
+     getInfomationInfoPackage : async(so_tbmt) => {
+          try {
+               let pool = await mssql.connect(config);
+               let sql = "SELECT * FROM THONGTINGOITHAU WHERE MATBMT = @so_tbmt";
+               let result = await pool
+                    .request()
+                    .input("so_tbmt", so_tbmt)
+                    .query(sql);
+               return result;
+          } catch (err) {
+               console.log(colors.red(err));
+          }
+     }
 
 }

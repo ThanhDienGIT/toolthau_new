@@ -52,16 +52,26 @@ module.exports = {
           }
      },
 
-     updateStatusPackage: async (magoithau, trangthaigoithau) => {
+     updateStatusPackage: async (magoithau) => {
           try {
                let pool = await mssql.connect(config);
                let sql = "UPDATE BangDuLieuThauGlobal SET isGet = 1 WHERE magoithau = @magoithau;"
                let result = await pool
                     .request()
                     .input("magoithau", magoithau)
-                    .input("trangthaigoithau", trangthaigoithau)
                     .query(sql);
-               return `Cập nhật thành công gói thầu ${magoithau} với trạng trạng thái gói thầu là ${trangthaigoithau}`;
+               return `Cập nhật thành công gói thầu ${magoithau}`;
+          } catch (err) {
+               console.log(colors.red(err));
+          }
+     },
+
+     getAllDataListPackageOther: async () => {
+          try {
+               let pool = await mssql.connect(config);
+               let sql = "SELECT * FROM BangDuLieuThauGlobal";
+               let result = await pool.request().query(sql);
+               return result.recordset;
           } catch (err) {
                console.log(colors.red(err));
           }
@@ -70,7 +80,30 @@ module.exports = {
      getAllDataListPackage: async () => {
           try {
                let pool = await mssql.connect(config);
-               let sql = "SELECT * FROM BangDuLieuThauGlobal";
+               let sql = "SELECT * FROM BangDuLieuThauGlobal where id <= 50000";
+               let result = await pool.request().query(sql);
+               return result.recordset;
+          } catch (err) {
+               console.log(colors.red(err));
+          }
+     },
+
+     getAllDataListPackageServer2: async () => {
+          try {
+               let pool = await mssql.connect(config);
+               let sql = "SELECT * FROM BangDuLieuThauGlobal where id >= 50001 AND id <= 100000";
+               let result = await pool.request().query(sql);
+               return result.recordset;
+          } catch (err) {
+               console.log(colors.red(err));
+          }
+     },
+
+
+     getAllDataListPackageServer3: async () => {
+          try {
+               let pool = await mssql.connect(config);
+               let sql = "SELECT * FROM BangDuLieuThauGlobal where id >= 100001 AND id <= 150000";
                let result = await pool.request().query(sql);
                return result.recordset;
           } catch (err) {

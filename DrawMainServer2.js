@@ -1,15 +1,18 @@
 const { Builder, By, until } = require("selenium-webdriver");
-const { checkListPackage, insertListPackage, updateStatusAndisGetPackage, updateStatusPackage, getAllDataListPackage } = require("./database/ListContractorsController")
+const { checkListPackage, insertListPackage, updateStatusAndisGetPackage, updateStatusPackage, getAllDataListPackageServer3 } = require("./database/ListContractorsController")
 const { checkDetailInfomationPackage, insertDetailInfomationPackage, getInfomationInfoPackage, updateDetailInfomationPackage, insertContractorsRelatedToTheBiddingPackage } = require("./database/DetailContractorsController")
 
+const { Telegraf } = require("telegraf");
+const bot = new Telegraf('6500184315:AAFDpDzHBE1AJmo9lut3AWtNJzvH35UJXfE', { handlerTimeout: 600000 });
 
 const DrawGoiThau = async () => {
      let driver = await new Builder().forBrowser("chrome").build();
      try {
-          const arrThau = await getAllDataListPackage()
+          const arrThau = await getAllDataListPackageServer3()
           const arrRun = await arrThau.filter(x => x.isGet === 0);
           await driver.get("https://muasamcong.mpi.gov.vn/");
           await driver.manage().window().maximize();
+          await new Promise(resolve => setTimeout(resolve, 2000));
           let closeButton = await driver.wait(until.elementLocated(By.id('popup-close')), 100000);
           await closeButton.click();
           // Lặp qua tất cả các gói thầu trong DB
@@ -22,13 +25,14 @@ const DrawGoiThau = async () => {
                const Itemtrangthaigoithau = await item.trangthaigoithau
                // Check tất cả gói thầu chưa lấy
                if (Number(item.isGet) === 0) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
                     let inputSearch = await driver.wait(until.elementLocated(By.name('keyword')), 100000);
                     await inputSearch.clear()
                     await inputSearch.sendKeys(magoithauItem);
                     // Nút tìm kiếm                                                                 
                     let searchButton = await driver.wait(until.elementLocated(By.className('search-button')), 100000)
                     await searchButton.click();
-
+                    await new Promise(resolve => setTimeout(resolve, 1000));
                     // Lấy trạng thái gói thầu
                     let DivStatus = await driver.wait(until.elementLocated(By.className('d-flex justify-content-between align-items-center')), 100000)
                     let Status = await DivStatus.findElement(By.css('span'))
@@ -440,12 +444,15 @@ const DrawGoiThau = async () => {
                console.log("")
                console.log("")
                console.log("----------------------------------")
+               await new Promise(resolve => setTimeout(resolve, 1000));
                await driver.get("https://muasamcong.mpi.gov.vn/");
+               await new Promise(resolve => setTimeout(resolve, 1000));
           }
      } catch (err) {
           console.log("lỗi")
+          await driver.quit()
+          await bot.telegram.sendMessage(6073926430, "local lỗi chạy lại nhé")
           await DrawGoiThau()
-          console.log(err)
      } finally {
           await driver.quit()
      }

@@ -1,14 +1,16 @@
 require("dotenv").config();
-const { Telegraf } = require("telegraf");
+
 const { scheduleJob } = require("node-schedule");
 
-const { runQuery, runSchedule , runScheduleNew} = require("./utils/main");
+const { runQuery, runSchedule, runScheduleNew } = require("./utils/main");
 const { HELP } = require("./lib/str");
 
 const { BOT_TOKEN, ADMIN_CHAT_ID, STR_SCHEDULES } = process.env;
-const SCHEDULES = STR_SCHEDULES.split(",");
 
+const SCHEDULES = STR_SCHEDULES.split(",");
+const { Telegraf } = require("telegraf");
 const bot = new Telegraf(BOT_TOKEN, { handlerTimeout: 600000 });
+
 
 // bot.help((ctx) => ctx.replyWithMarkdown(HELP));
 // bot.command("update", (ctx) => bot.telegram.sendMessage(ADMIN_CHAT_ID, JSON.stringify(ctx.update)));

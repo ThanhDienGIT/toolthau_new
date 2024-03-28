@@ -1,6 +1,6 @@
 const { Builder, By, until } = require("selenium-webdriver");
 const assert = require("assert");
-const { checkListPackage } = require("./database/ListContractorsController")
+const { checkListPackage, insertListPackage } = require("./database/ListContractorsController")
 const { Driver } = require("selenium-webdriver/chrome");
 
 const checkThau = async () => {
@@ -29,7 +29,6 @@ async function crawHaNoiHCM() {
           await searchButton.click();
           console.log('Đã vào trang tìm kiếm nâng cao')
           // Select danh sách tỉnh thành phố
-
           await new Promise(resolve => setTimeout(resolve, 10000));
           const datePicker = await driver.findElements(By.className('content__body__session'));
           for (var element of datePicker) {
@@ -97,7 +96,8 @@ async function crawHaNoiHCM() {
                await new Promise(resolve => setTimeout(resolve, 10000));
                let Element = await selectElement.findElement(By.css('option[value="50"]'))
                await new Promise(resolve => setTimeout(resolve, 10000));
-               await driver.executeScript("arguments[0].value = '10000';", Element);
+               await driver.executeScript("arguments[0].value = '5000';", Element);
+               await new Promise(resolve => setTimeout(resolve, 20000));
                await Element.click();
                console.log('Đã chọn xổ 10.000 dòng')
                await new Promise(resolve => setTimeout(resolve, 60000));
@@ -177,10 +177,13 @@ async function crawHaNoiHCM() {
                               url: urlremoteData
                          }
                          console.log(i)
-                         if (await checkThauExistsGlobal(object.TBMT.slice(10)) === true) {
+                         if (await checkListPackage(object.TBMT.slice(10)) === true) {
                               console.log('Đã có gối thầu này:' + object.TBMT.slice(10))
                          } else {
                               console.log('Đã insert vào:' + object.TBMT.slice(10))
+                              if (diadiem.includes('Hậu Giang')) {
+                                   console.log('Gói này của Hậu Giang nè')
+                              }
                               await insertThauGlobal(object.TBMT.slice(10), object.thoidiemdang, object.trangthaigoithau, object.diadiem);
                          }
                     }
@@ -324,7 +327,7 @@ const CapNhatTinhHinhGoiThauToanTinh = async () => {
                               url: urlremoteData
                          }
                          console.log(i)
-                         if (await checkThauExistsGlobal(object.TBMT.slice(10)) === true) {
+                         if (await checkListPackage(object.TBMT.slice(10)) === true) {
                               console.log('Đã có gối thầu này:' + object.TBMT.slice(10))
                          } else {
                               console.log('Đã insert vào:' + object.TBMT.slice(10))
@@ -347,7 +350,7 @@ const CapNhatTinhHinhGoiThauToanTinh = async () => {
           await driver.quit();
      }
 }
-CapNhatTinhHinhGoiThauToanTinh()
+
 
 async function crawDataServer() {
      // launch the browser
@@ -358,16 +361,17 @@ async function crawDataServer() {
           await driver.manage().window().maximize();
           await new Promise(resolve => setTimeout(resolve, 10000));
           let closeButton = await driver.findElement(By.id('popup-close'));
-          await new Promise(resolve => setTimeout(resolve, 10000));
           await closeButton.click();
           let searchButton = await driver.findElement(By.className('search-button'));
           await searchButton.click();
           await new Promise(resolve => setTimeout(resolve, 10000));
           let selectElement = await driver.findElement(By.css('select'));
           let Element = await selectElement.findElement(By.css('option[value="50"]'))
-          await driver.executeScript("arguments[0].value = '10000';", Element);
-          await Element.click();
           await new Promise(resolve => setTimeout(resolve, 10000));
+          await driver.executeScript("arguments[0].value = '5000';", Element);
+          await new Promise(resolve => setTimeout(resolve, 5000));
+          await Element.click();
+          await new Promise(resolve => setTimeout(resolve, 20000));
           let dulieucao = await driver.findElements(By.className('content__body__left__item__infor'));
           for (let el of dulieucao) {
                let ModalTBMT = await el.findElement(By.className('d-flex justify-content-between align-items-center'))
@@ -413,39 +417,28 @@ async function crawDataServer() {
                }
                let Modalthoidiemdongthauvahinhthucthau = await ModalRow.findElement(By.className('col-md-2 content__body__right__item__infor__contract'))
                let contentthoidiemdongthauhinhthucduthau = await Modalthoidiemdongthauvahinhthucthau.findElements(By.css('h5'))
-               let hanban = await contentthoidiemdongthauhinhthucduthau[1].getText() + " " + await contentthoidiemdongthauhinhthucduthau[0].getText();
-               let hinhthucduthau = await contentthoidiemdongthauhinhthucduthau[2].getText();
-               let URL = await link.getAttribute('href')
+               // let hanban = await contentthoidiemdongthauhinhthucduthau[1].getText() + " " + await contentthoidiemdongthauhinhthucduthau[0].getText();
+               // let hinhthucduthau = await contentthoidiemdongthauhinhthucduthau[2].getText();
+               // let URL = await link.getAttribute('href')
                let tengoithautext = await tengoithau.getText()
                var SoTBMTData = await TBMT.getText();
-               var tenData = await tengoithautext;
-               var benmoithauData = await benmoithautext;
-               var nhadautuData = await nhadaututext;
-               var hinhthucData = await hinhthucduthau;
+               // var tenData = await tengoithautext;
+               // var benmoithauData = await benmoithautext;
+               // var nhadautuData = await nhadaututext;
+               // var hinhthucData = await hinhthucduthau;
                var thoidiemdangData = await ngaydangtaithongbaotext;
-               var hanbanData = await hanban;
-               var urlremoteData = await URL;
+               // var hanbanData = await hanban;
+               // var urlremoteData = await URL;
                var trangthaigoithautext = await trangthaigoithau.getText();
-               const object = await {
-                    TBMT: SoTBMTData,
-                    name: tenData,
-                    trangthaigoithau: trangthaigoithautext,
-                    benmoithau: benmoithauData,
-                    nhadautu: nhadautuData,
-                    hinhthuc: hinhthucData,
-                    diadiem: diadiemtext,
-                    thoidiemdang: thoidiemdangData,
-                    hanban: hanbanData,
-                    url: urlremoteData
-               }
-               if (await checkListPackage(object.TBMT.slice(10)) === true) {
-                    console.log('Đã có gối thầu này:' + object.TBMT.slice(10))
+
+               if (await checkListPackage(SoTBMTData.slice(10)) === 'true') {
+                    console.log('Đã có gối thầu này:' + SoTBMTData.slice(10))
                } else {
-                    console.log('Đã insert vào:' + object.TBMT.slice(10))
-                    const ketqua = await insertListPackage(object.TBMT.slice(10), object.thoidiemdang, object.trangthaigoithau, object.diadiem);
+                    console.log('Đã insert vào:' + SoTBMTData.slice(10))
+                    const ketqua = await insertListPackage(SoTBMTData.slice(10), thoidiemdangData, trangthaigoithautext, diadiemtext);
                     console.log(ketqua)
                }
-               //await arr2.push(object)
+
           }
      } catch (err) {
           console.log(err)
@@ -458,5 +451,5 @@ async function crawDataServer() {
      }
 }
 
-
+crawDataServer()
 module.exports = {};
