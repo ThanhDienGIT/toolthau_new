@@ -451,13 +451,15 @@ const DrawGoiThau = async () => {
      } catch (err) {
           console.log("lỗi")
           await driver.quit()
-          await bot.telegram.sendMessage(6073926430, "local lỗi chạy lại nhé")
+         
           await DrawGoiThau()
      } finally {
           await driver.quit()
      }
 
 }
-
-
-DrawGoiThau()
+const sendTest = async () => {
+     await bot.telegram.sendMessage(6073926430, "local lỗi chạy lại nhé")
+}
+sendTest();
+//DrawGoiThau()

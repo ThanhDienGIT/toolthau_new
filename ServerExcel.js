@@ -1,6 +1,6 @@
 const http = require('node:http');
 const express = require("express");
-const { exportUser, exportData } = require('./Controller');
+const { exportUser, exportData, exportDanhSachGoiThauGlobal } = require('./Controller');
 const hostname = '127.0.0.1';
 const port = 5000;
 
@@ -11,6 +11,7 @@ router.get('/', (req, res) => {
 })
 router.get('/test', exportUser)
 router.get('/export', exportData)
+router.get('/exportDanhSachGoiThauGlobal',exportDanhSachGoiThauGlobal)
 router.listen(port, hostname, () => {
     console.log('run in http://' + hostname + ":" + port)
 })

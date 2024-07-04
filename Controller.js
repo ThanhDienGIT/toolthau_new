@@ -1,5 +1,54 @@
 const excelJS = require("exceljs");
 const { getAllDataExport, selectNhaTrungThau, selectThongTinGoiThau } = require("./database/dulieu_thau");
+const { selectDanhSachGoiThau } = require("./DanhSachGoiThau/sql/DanhSachGoiThau");
+
+const formatDate = (dateformatData) => {
+    const dateFormat = new Date(dateformatData)
+    const ngay = dateFormat.getDate() > 9 ? dateFormat.getDate() : '0' + dateFormat.getDate(); 
+    const thang = (dateFormat.getMonth() + 1) > 9 ? (dateFormat.getMonth() + 1) : '0' + (dateFormat.getMonth() + 1); 
+    const nam  = dateFormat.getFullYear();
+    return ngay + '/' + thang + '/' + nam;
+}
+
+const exportDanhSachGoiThauGlobal = async (req,res)=>{
+    const arrExport = await selectDanhSachGoiThau()
+
+    console.log(arrExport)
+
+    const workbook = new excelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Users");
+
+    // Define columns in the worksheet 
+    worksheet.columns = [
+        { header: "Mã gói thầu", key: "MA_TBMT", width: 30 },
+        { header: "Tên gói thầu", key: "TENGOITHAU", width: 40 },
+        { header: "Bên mời thầu", key: "BENMOITHAU", width: 30 },
+        { header: "Chủ đầu tư", key: "CHUDAUTU", width: 30 },
+        { header: "Ngày đăng tải mời thầu", key: "NGAYDANGTAITHONGBAOTEXT", width: 100 },
+        { header: "Địa điểm", key: "DIADIEM", width: 30 },
+        { header: "Thời điểm đóng thầu", key: "THOIDIEMDONGTHAU", width: 30 },
+        { header: "Hình thức dự thầu", key: "HINHTHUCDUTHAU", width: 30 },
+        { header: "Nhà trúng thầu", key: "NHATRUNGTHAU", width: 30 },
+        { header: "Giá trúng thầu", key: "GIATRUNGTHAU", width: 30 },
+        { header: "Ngày phê duyệt KQLCNT", key: "NGAYPHEDUYETKQLCNT", width: 30 },
+        { header: "Trạng thái gói thầu", key: "TRANGTHAIGOITHAU", width: 30 },
+        { header: "URL Gói thầu", key: "URL", width: 30 },
+    ];
+
+    // Add data to the worksheet 
+   arrExport.forEach(ele => {
+        ele['THOIDIEMDONGTHAU'] = formatDate(ele['THOIDIEMDONGTHAU'].slice(0,ele['THOIDIEMDONGTHAU'].length - 8))
+        worksheet.addRow(ele);
+    });
+
+    // Set up the response headers 
+    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"); res.setHeader("Content-Disposition", "attachment; filename=" + "danhsachgoithau_HG.xlsx");
+
+    // Write the workbook to the response object 
+    workbook.xlsx.write(res).then(() => res.end());
+} 
+
+
 
 
 const exportData = async (req, res) => {
@@ -169,4 +218,4 @@ const exportUser = async (req, res) => {
 };
 
 
-module.exports = { exportUser, exportData };
+module.exports = { exportUser, exportData,exportDanhSachGoiThauGlobal };
