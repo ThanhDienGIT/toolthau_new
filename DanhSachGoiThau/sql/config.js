@@ -12,8 +12,8 @@
 //     options: { encrypt: false },
 // };
 const StringConnect = {
-    server: "127.0.0.1",
-    port: 50779,
+    server: "10.102.13.18",
+    port: 1433,
     database: "muasamcong",
     authentication: {
         options: {

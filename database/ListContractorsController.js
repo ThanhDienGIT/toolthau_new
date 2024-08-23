@@ -80,7 +80,7 @@ module.exports = {
      getAllDataListPackage: async () => {
           try {
                let pool = await mssql.connect(config);
-               let sql = "SELECT * FROM BangDuLieuThauGlobal where id <= 50000";
+               let sql = "SELECT * FROM BangDuLieuThauGlobal";
                let result = await pool.request().query(sql);
                return result.recordset;
           } catch (err) {

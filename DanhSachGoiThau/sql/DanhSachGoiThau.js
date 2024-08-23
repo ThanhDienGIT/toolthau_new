@@ -31,8 +31,6 @@ module.exports = {
         }
     },
 
-
-
     TestADDSQL : async (data) =>
     {
         console.log('data',data)
